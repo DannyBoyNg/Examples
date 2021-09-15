@@ -1,0 +1,42 @@
+<h2>Example: SignalR - Windows Authentication</h2>
+<table>
+    <tbody>
+        <tr>
+            <td>SignalR endpoint:</td>
+            <td>
+                <input [(ngModel)]="signalrServer">
+                <button *ngIf="HubConnection?.state === 'Disconnected' || HubConnection === undefined" (click)="connect()">Connect</button>
+                <button *ngIf="HubConnection?.state === 'Connected'" (click)="disconnect()">Disconnect</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Connection state: </td>
+            <td>
+                <span class="statusLight" [ngClass]="{'connected': HubConnection?.state === 'Connected', 'disconnected' : HubConnection?.state === 'Disconnected' }"></span>
+    {{HubConnection?.state}}
+            </td>
+        </tr>
+        <tr>
+            <td>Connection id:</td>
+            <td>{{HubConnection?.connectionId}}</td>
+        </tr>
+    </tbody>
+</table>
+<div id="chatWindow">
+    <div>
+        <div *ngFor="let item of chatBuffer">
+            <span class="timestamp">{{item.dateTime | date:'yyyy-MM-dd HH:mm:ss.SSS'}}</span> 
+            <span class="username"> {{item.userName}}</span>:
+            <span class="message"> {{item.message}}</span>
+        </div>
+    </div>
+</div>
+<br>
+<table>
+    <tbody>
+        <tr>
+            <td>Message: </td>
+            <td><input [(ngModel)]="userInput" (keyup.enter)="sendToServer()"><button (click)="sendToServer()">Send</button></td>
+        </tr>
+    </tbody>
+</table>
