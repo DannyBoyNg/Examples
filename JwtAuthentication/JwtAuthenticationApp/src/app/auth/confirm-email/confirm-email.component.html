@@ -1,0 +1,14 @@
+<br><br><br><br>
+<div class="dialog-window">
+  <div class="dialog-header">
+    <div class="dialog-title noselect">Confirm Email</div>
+  </div>
+  <div class="dialog-content">
+    <br>
+    <p class="response">{{response}}</p>
+    <br>
+  </div>
+  <div class="dialog-footer">
+    <button routerLink="/login" [disabled]="!response">Go to login</button>
+  </div>
+</div>

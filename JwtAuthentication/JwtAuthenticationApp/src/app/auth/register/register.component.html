@@ -1,0 +1,45 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+<div class="dialog-window">
+  <div class="dialog-header">
+    <div class="dialog-title noselect">Register</div>
+  </div>
+  <div class="dialog-content">
+    <br>
+    <div class="errors" *ngFor="let item of errors">
+      {{item}}<br>
+    </div>
+    <br>
+    <table>
+      <tr>
+        <td>Username</td>
+        <td>
+          <input class="formcontrol" type="text" formControlName="username" required>
+        </td>
+      </tr>
+      <tr>
+        <td>Email</td>
+        <td>
+          <input class="formcontrol" type="text" formControlName="email" name="email" required>
+        </td>
+      </tr>
+      <tr>
+        <td>Password</td>
+        <td>
+          <input class="formcontrol" type="password" formControlName="password" name="password" required>
+        </td>
+      </tr>
+      <tr>
+        <td>Confirm Password</td>
+        <td>
+          <input class="formcontrol" type="password" formControlName="confirmPassword" required>
+        </td>
+      </tr>
+    </table>
+    <br>
+  </div>
+  <div class="dialog-footer">
+    <a class="link" routerLink="/login">Go to login</a>
+    <button title="Enter" type="submit" [disabled]="!form.valid || registerInProgress">Register</button>
+  </div>
+</div>
+</form>

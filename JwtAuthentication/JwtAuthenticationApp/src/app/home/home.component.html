@@ -1,0 +1,11 @@
+<h2>{{secretMessage | async}}</h2>
+<p>Your Access token contains the following claims:</p>
+<pre>
+<div *ngFor="let item of claims | keyvalue">
+    <b>{{item.key}}:</b> {{item.value}}
+</div>
+</pre>
+<p>
+    Token expires in: {{expiresIn}} seconds
+</p>
+<p style="margin: 0 auto; width: 60px"><button (click)="auth.logout()">Logout</button></p>

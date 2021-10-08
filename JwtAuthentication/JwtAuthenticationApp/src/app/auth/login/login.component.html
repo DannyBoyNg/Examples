@@ -1,0 +1,31 @@
+<form [formGroup]="form" (ngSubmit)="login()">
+  <div class="dialog-window">
+    <div class="dialog-header">
+      <div class="dialog-title noselect">Log In</div>
+    </div>
+    <div class="dialog-content">
+      <br>
+      <br>
+      <table>
+        <tr>
+          <td>Username</td>
+          <td>
+            <input class="formcontrol" type="text" formControlName="username" #uiUsername>
+          </td>
+        </tr>
+        <tr>
+          <td>Password</td>
+          <td>
+            <input class="formcontrol" type="password" formControlName="password">
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="dialog-footer">
+      <a class="link" routerLink="/register">Register new account</a>
+      <a class="link" routerLink="/forgotpassword">Forgot password</a>
+      <a class="link" routerLink="/forgotusername">Forgot username</a>
+      <button type="submit" [disabled]="!form.valid || loginInProgress">Log In</button>
+    </div>
+  </div>
+</form>

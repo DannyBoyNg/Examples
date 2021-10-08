@@ -1,0 +1,26 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+<div class="dialog-window">
+  <div class="dialog-header">
+    <div class="dialog-title noselect">Forgot Username</div>
+  </div>
+  <div class="dialog-content">
+    <br>
+    <div class="errors" *ngFor="let item of errors">
+      {{item}}<br>
+    </div>
+    <br>
+    <table>
+      <tr>
+        <td>Email</td>
+        <td>
+          <input class="formcontrol" type="text" formControlName="email" name="email" required>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="dialog-footer">
+    <a class="link" routerLink="/login">Go to login</a>
+    <button title="Enter" type="submit" [disabled]="!form.valid">Submit</button>
+  </div>
+</div>
+</form>
