@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Endpoints\" />
+    <ProjectReference Include="..\ExampleWebApi.SharedKernel\ExampleWebApi.SharedKernel.csproj" />
   </ItemGroup>
 
 </Project>
