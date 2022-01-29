@@ -12,6 +12,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddSharedKernelServices(this IServiceCollection services, IConfiguration configuration)
     {
+        //Add and configure JWT authentication
         var tokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -23,17 +24,13 @@ public static class DependencyInjection
             ValidateLifetime = true,
             SaveSigninToken = true,
         };
-
         services
-            .AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => options.TokenValidationParameters = tokenValidationParameters);
-
         services.AddScoped<IJwtService, JwtService>();
         services.Configure<JwtSettings>(options => options.TokenValidationParameters = tokenValidationParameters);
+
+        //Add other services
         services.AddScoped<UserService>();
 
         return services;

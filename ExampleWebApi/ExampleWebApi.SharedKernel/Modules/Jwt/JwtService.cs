@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -9,9 +10,9 @@ namespace ExampleWebApi.SharedKernel.Modules.Jwt
     {
         JwtSettings Settings { get; set; }
 
-        public JwtService(JwtSettings settings)
+        public JwtService(IOptions<JwtSettings> settings)
         {
-            Settings = settings;
+            Settings = settings?.Value ?? new JwtSettings();
             if (string.IsNullOrWhiteSpace(Settings.Key)) throw new JwtSecretKeyNotSetException();
         }
 
