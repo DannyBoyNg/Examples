@@ -2,7 +2,6 @@
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace ExampleWebApi.SharedKernel.Modules.Jwt
 {
@@ -13,22 +12,24 @@ namespace ExampleWebApi.SharedKernel.Modules.Jwt
         public JwtService(IOptions<JwtSettings> settings)
         {
             Settings = settings?.Value ?? new JwtSettings();
-            if (string.IsNullOrWhiteSpace(Settings.Key)) throw new JwtSecretKeyNotSetException();
+            if (Settings.TokenValidationParameters?.IssuerSigningKey == null) throw new JwtSecretKeyNotSetException();
         }
 
         public string GenerateJwtAccessToken(IEnumerable<Claim> claims)
         {
             var issuedAt = DateTime.UtcNow;
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Settings.Key!));
-            var token = new JwtSecurityToken(
-              issuer: Settings.Issuer,
-              audience: Settings.Audience,
-              claims: claims,
-              notBefore: issuedAt,
-              expires: issuedAt.AddMinutes(Settings.AccessTokenDurationInMinutes),
-              signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
-            );
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var key = Settings.TokenValidationParameters?.IssuerSigningKey;
+            var tokenDescriptor = new SecurityTokenDescriptor {
+              Issuer = Settings.TokenValidationParameters?.ValidIssuer,
+              Audience = Settings.TokenValidationParameters?.ValidAudience,
+              Subject = new ClaimsIdentity(claims),
+              NotBefore = issuedAt,
+              Expires = issuedAt.AddMinutes(Settings.AccessTokenExpirationInMinutes),
+              SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(securityToken);
         }
 
         public string GenerateJwtRefreshToken()
@@ -41,7 +42,7 @@ namespace ExampleWebApi.SharedKernel.Modules.Jwt
         public bool IsRefreshTokenExpired(string token)
         {
             DateTime when = GetCreationTimeFromRefreshToken(token);
-            return when < DateTime.UtcNow.AddHours(Settings.RefreshTokenDurationInHours * -1);
+            return when < DateTime.UtcNow.AddHours(Settings.RefreshTokenExpirationInHours * -1);
         }
 
         public DateTime GetCreationTimeFromRefreshToken(string token)
@@ -75,16 +76,17 @@ namespace ExampleWebApi.SharedKernel.Modules.Jwt
                 ValidateAudience = false,
                 ValidateIssuer = false,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Settings.Key!)),
+                IssuerSigningKey = Settings.TokenValidationParameters?.IssuerSigningKey,
                 ValidateLifetime = false //here we are saying that we don't care about the token's expiration date
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
-            if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            var claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+            if (securityToken is not JwtSecurityToken jwtSecurityToken 
+                || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
                 throw new SecurityTokenException("Invalid access token");
 
-            return principal;
+            return claimsPrincipal;
         }
 
     }

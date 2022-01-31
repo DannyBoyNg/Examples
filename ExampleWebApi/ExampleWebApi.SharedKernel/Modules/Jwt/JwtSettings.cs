@@ -4,12 +4,6 @@ namespace ExampleWebApi.SharedKernel.Modules.Jwt
 {
     public class JwtSettings
     {
-        public string? Key { get; set; }
-        public string? Issuer { get; set; }
-        public string? Audience { get; set; }
-        public int AccessTokenDurationInMinutes { get; set; } = 30;
-        public int RefreshTokenDurationInHours { get; set; } = 2;
-
         /// <summary>
         /// Gets or sets when the access token expires.
         /// </summary>
